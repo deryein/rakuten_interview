@@ -15,4 +15,4 @@ function sum(a, b){
   progeess(a, b);
 }
 
-sum(6,2);
+sum(7,2);
