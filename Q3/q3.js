@@ -1,5 +1,11 @@
 
 var oringinalArray = [[1,2],[3,5],[6,7],[8,10],[12,16]];
+// var oringinalArray = [[1,3],[6,9]];
+
+
+Array.prototype.insert = function(index, item) {
+  this.splice(index, 0, item);
+};
 
 function start(){
 
@@ -8,105 +14,116 @@ function start(){
 
   if(input1 >= input2){
   	alert('integer 1 must smaller than integer 2');
-  }else{
-
-  	mergeArray([input1,input2]);
+  	return false;
   }
 
+  for(var i = 0; i < oringinalArray.length; i++){
+
+  	if(input1 === oringinalArray[i][0] || input1 === oringinalArray[i][1]){
+  		alert('repeat number in array!');
+  		return false;
+  	}
+
+  	if(input2 === oringinalArray[i][0] || input2 === oringinalArray[i][1]){
+  		alert('repeat number in array!');
+  		return false;
+  	}
+
+  }
+
+  arrangeArray([input1,input2]);
+  
 };
 
 
-	function mergeArray(insertArray){
+function arrangeArray(insertArray){
 
-		var copyArray = oringinalArray.slice(0);
+	var head = insertArray[0];
+	var end = insertArray[1];
 
-		Array.prototype.insert = function ( index, item ) {
-		    this.splice( index, 0, item );
-		};
+	var copyOringinalArray = oringinalArray.slice(0);
 
-		var head = insertArray[0];
-		var end = insertArray[1];
-
-
-		var isOverLay = function(array1 , array2, callback){
-
-			if(array1[0] < array2[1] && array1[0] > array2[0]){
-				callback(true);
-			}else{
-				callback(false);
-			}
-		};
+	/** Answer Alert **/
+	var outputAnswer = function(){
+	  var answerString = '';
+	  for(var i = 0; i < copyOringinalArray.length; i++){
+	    answerString = answerString + '[' + copyOringinalArray[i].toString() + ']';
+	  }
+	  document.getElementById('answer').innerHTML = 'output array: ' + answerString;
+	};
 
 
-		var arrayMerge = function(index){
+	/** check is array overlay **/
+	var isOverLay = function(array1, array2, callback) {
+
+	  if (array1[0] < array2[1] && array1[0] > array2[0]) {
+	    callback(true);
+	  } else {
+	    callback(false);
+	  }
+	};
+
+	/** merge Array **/
+	var arrayMerge = function(index) {
+
+	  var array1 = copyOringinalArray[index - 1];
+	  var array2 = copyOringinalArray[index];
+
+	  var tempArray = array1.concat(array2).sort(function(a, b) {
+	    return a - b
+	  });
+
+	  var newSubArray = [tempArray[0], tempArray[tempArray.length - 1]];
 
 
-			var array1 = copyArray[index -1];
-			var array2 = copyArray[index];
+	  copyOringinalArray.splice(index - 1, 2);
+	  copyOringinalArray.insert(index - 1, newSubArray)
 
-			var tempArray = array1.concat(array2).sort(function(a, b){return a - b});
+	  if(copyOringinalArray.length <= index){
+	  	outputAnswer();
+	  	return;
+	  }
 
-			console.log('----------------------------------------------');
-			console.log(tempArray);
+	  isOverLay(copyOringinalArray[index], copyOringinalArray[index - 1], function(isOverLay) {
 
-			var newSubArray = [tempArray[0], tempArray[tempArray.length -1]];
+	    if (isOverLay) {
+	      arrayMerge(index);
+	    } else {
+	      outputAnswer();
+	    }
+	  });
+	};
 
+	/** find insert Array position **/
+	var findStart = function(index) {
 
-			copyArray.splice(index-1, 2);
-			copyArray.insert(index - 1, newSubArray)
+	  if (head > copyOringinalArray[index][0]) {
 
-			isOverLay(copyArray[index], copyArray[index -1], function(isOverLay){
+	  	if(index === copyOringinalArray.length -1){
+	  		copyOringinalArray.insert(index + 1, insertArray);
+	  		outputAnswer();
+	  		return;
+	  	}
 
-				if(isOverLay){
+	    findStart(index + 1);
+	  } else {
 
-					arrayMerge(index);
+	    copyOringinalArray.insert(index, insertArray);
 
-				}else{
-					console.log('got you');
-					console.log('====================');
-					console.log(copyArray);
-				}
+	    var startIndex = (index === 0) ?  index + 1: index;
 
+	    isOverLay(copyOringinalArray[startIndex], copyOringinalArray[startIndex - 1], function(isOverLay) {
 
-			});
+	      if (isOverLay) {
+	        arrayMerge(startIndex);
+	      } else {
+	        outputAnswer();
+	      }
+	    });
+	  }
+	};
 
-
-
-
-		};
-
-
-
-		var findStart = function(index){
-
-			if(head > copyArray[index][0]){
-				findStart(index + 1);
-			}else{
-
-				copyArray.insert(index, insertArray);
-
-				isOverLay(copyArray[index], copyArray[index -1], function(isOverLay){
-
-					if(isOverLay){
-						arrayMerge(index);
-					}else{
-						console.log('got you');
-						console.log('====================');
-						console.log(copyArray);
-					}
-
-				});
-
-			}
+	findStart(0);
+}
 
 
-
-		};
-
-
-		findStart(0);
-	}
-
-
-
-	// mergeArray();
