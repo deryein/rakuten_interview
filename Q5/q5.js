@@ -1,3 +1,11 @@
+function start(){
+
+  var num1 = document.getElementById('num-1').value;
+  var num2 = document.getElementById('num-2').value;
+  sum(num1, num2)
+}
+
+
 function sum(a, b){
 
   var progeess = function(x, y){
@@ -9,10 +17,9 @@ function sum(a, b){
     	carry = carry << 1;
     	progeess(num, carry);
     }else{
-    	alert(num);
+      document.getElementById('answer').innerHTML = 'Answer:' + num;
     }
   };
   progeess(a, b);
 }
 
-sum(7,2);
